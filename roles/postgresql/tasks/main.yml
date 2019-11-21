@@ -1,0 +1,45 @@
+---
+
+- name: "Install common {{ packages | list }} for 1c app and postgresql"
+  apt:
+    name: "{{ packages }}"
+    force: "yes"
+  vars:
+    packages:
+    - gnupg2
+    - postgresql-common
+    - libicu-dev
+    - icu-doc
+    - libicu-dev
+
+- name: "Install a .deb packages from the internet"
+  apt:
+    deb: "{{ item }}"
+    force: "yes"
+  loop:
+    - "http://security.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.3_amd64.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7ubuntu0.4_amd64.deb"
+
+- name: "Copy PostgreSQL files"
+  unarchive:
+    src: ./deb-pkg/postgresql_10.5_6.1C_amd64_deb.tar.bz2
+    dest: /tmp
+
+- name: "Install PostgreSQL for 1c from files"
+  apt:
+    deb: "{{ item }}"
+  loop:
+    - /tmp/postgresql-10.5-6.1C_amd64_deb/libpq5_10.5-6.1C_amd64.deb
+    - /tmp/postgresql-10.5-6.1C_amd64_deb/postgresql-client-10_10.5-6.1C_amd64.deb
+    - /tmp/postgresql-10.5-6.1C_amd64_deb/postgresql-10_10.5-6.1C_amd64.deb
+
+- name: "Set hold postgresql"
+  dpkg_selections:
+    name: "postgresql"
+    selection: hold
+
+- name: "Enable service postgrespro and set state restarted"
+  systemd:
+    name: postgresql.service
+    enabled: "yes"
+    state: started
