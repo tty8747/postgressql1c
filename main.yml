@@ -12,6 +12,7 @@
     docker_users:
       - deploy
       - goto
+    ufw_state: disabled
 
   roles:
     - { role: info, tags: ['info'] }

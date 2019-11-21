@@ -2,7 +2,7 @@
 
 - name: "Allow enable UFW"
   ufw:
-    state: enabled
+    state: "{{ ufw_state }}"
 
 - name: "Add rules to UFW"
   ufw:
