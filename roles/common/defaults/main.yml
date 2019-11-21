@@ -2,3 +2,4 @@
 update_cache: "yes"
 cache_valid_time: 3600
 timezone: Europe/Moscow
+my_locale: ru_RU.UTF-8

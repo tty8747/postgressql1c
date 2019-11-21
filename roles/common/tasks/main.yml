@@ -19,6 +19,14 @@
     - iotop
     - net-tools
     - git
-- name: Set timezone to your timezone
+- name: "Set timezone to your timezone"
   timezone:
     name: "{{ timezone }}"
+
+- name: "Ensure a locale exists"
+  locale_gen:
+    name: "{{ my_locale }}"
+    state: present
+
+- name: "Set as default locale"
+  command: "update-locale LANG={{ my_locale }} LC_ALL={{ my_locale }} && dpkg-reconfigure console-setup"
