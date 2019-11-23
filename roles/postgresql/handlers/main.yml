@@ -3,3 +3,9 @@
 - name: "Update cache"
   apt:
     update_cache: "yes"
+
+- name: "Enable service postgresql and set state started"
+  systemd:
+    name: postgresql.service
+    enabled: "yes"
+    state: started

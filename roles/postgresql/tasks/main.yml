@@ -3,43 +3,54 @@
 - name: "Install common {{ packages | list }} for 1c app and postgresql"
   apt:
     name: "{{ packages }}"
-    force: "yes"
   vars:
     packages:
     - gnupg2
-    - postgresql-common
     - libicu-dev
     - icu-doc
     - libicu-dev
+    - ssl-cert
+    - python-psycopg2
 
 - name: "Install a .deb packages from the internet"
   apt:
     deb: "{{ item }}"
-    force: "yes"
   loop:
     - "http://security.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.3_amd64.deb"
     - "http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7ubuntu0.4_amd64.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-client-common_199ubuntu0.1_all.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-common_199ubuntu0.1_all.deb"
 
 - name: "Copy PostgreSQL files"
   unarchive:
-    src: ./deb-pkg/postgresql_10.5_6.1C_amd64_deb.tar.bz2
+    src: "{{ item }}"
     dest: /tmp
+  loop:
+    - ./deb-pkg/postgresql_11.5_1.1C_amd64_addon_deb.tar.bz2
+    - ./deb-pkg/postgresql_11.5_1.1C_amd64_deb.tar.bz2
 
 - name: "Install PostgreSQL for 1c from files"
   apt:
     deb: "{{ item }}"
   loop:
-    - /tmp/postgresql-10.5-6.1C_amd64_deb/libpq5_10.5-6.1C_amd64.deb
-    - /tmp/postgresql-10.5-6.1C_amd64_deb/postgresql-client-10_10.5-6.1C_amd64.deb
-    - /tmp/postgresql-10.5-6.1C_amd64_deb/postgresql-10_10.5-6.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_deb/libpq5_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_deb/postgresql-client-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_deb/postgresql-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-plperl-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-plpython3-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-pltcl-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-doc-11_11.5-1.1C_all.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/libecpg6_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/libecpg-compat3_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/libpgtypes3_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/libpq-dev_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-11-dbg_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-pltcl-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/postgresql-server-dev-11_11.5-1.1C_amd64.deb
+    - /tmp/postgresql-11.5-1.1C_amd64_addon_deb/libecpg-dev_11.5-1.1C_amd64.deb
+  notify: "Enable service postgresql and set state started"
 
 - name: "Set hold postgresql"
   dpkg_selections:
     name: "postgresql"
     selection: hold
-
-- name: "Enable service postgrespro and set state restarted"
-  systemd:
-    name: postgresql.service
-    enabled: "yes"
-    state: started
