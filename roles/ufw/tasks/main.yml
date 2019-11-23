@@ -4,8 +4,16 @@
   ufw:
     state: "{{ ufw_state }}"
 
-- name: "Add rules to UFW"
+- name: "Openning ports for list services"
   ufw:
     rule: allow
     name: "{{ item }}"
   loop: "{{ ufw_profiles }}"
+
+- name: "Opening ports for Postgresql"
+  ufw:
+    rule: allow
+    port: '5432'
+    src: "{{ item }}"
+  loop:
+    - 127.0.0.1/32
