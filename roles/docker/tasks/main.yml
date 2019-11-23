@@ -10,6 +10,7 @@
     - curl
     - gnupg-agent
     - software-properties-common
+    - gnupg-curl
 
 - name: "Add an apt key by id from a keyserver"
   apt_key:
