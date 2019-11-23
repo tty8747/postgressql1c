@@ -54,3 +54,12 @@
   dpkg_selections:
     name: "postgresql"
     selection: hold
+
+- name: "Push Postgresql config"
+  template:
+    src: "roles/postgresql/templates/postgresql.conf.j2"
+    dest: "/etc/postgresql/11/main/postgresql.conf"
+    owner: postgres
+    group: postgres
+    mode: u=rw,g=r,o=r
+  notify: "Reboot Postgresql that smb.conf changes to apply"
