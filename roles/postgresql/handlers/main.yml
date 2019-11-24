@@ -10,7 +10,7 @@
     enabled: "yes"
     state: started
 
-- name: "Reboot Postgresql that smb.conf changes to apply"
+- name: "Reboot Postgresql that postgresql.conf changes to apply"
   systemd:
     name: postgresql.service
     state: restarted
