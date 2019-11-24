@@ -81,8 +81,8 @@
   become: "yes"
   postgresql_user:
     db: "{{ item.1.db_name }}"
-    name: "{{ item.1.users.name }}"
-    password: "{{ item.1.users.password }}"
+    name: "{{ item.1.user.name }}"
+    password: "{{ item.1.user.password }}"
     priv: ALL
     state: present
   loop: "{{ databases | dict2items | subelements('value.set') }}"
@@ -91,7 +91,7 @@
   become_user: postgres
   become: "yes"
   postgresql_user:
-    name: "{{ item.1.users.name }}"
+    name: "{{ item.1.user.name }}"
     role_attr_flags: NOSUPERUSER,NOCREATEDB
     state: present
   loop: "{{ databases | dict2items | subelements('value.set') }}"
