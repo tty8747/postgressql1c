@@ -1,0 +1,16 @@
+---
+
+- name: "Enable service srv1cv83 and set state started"
+  systemd:
+    name: srv1cv83.service
+    enabled: "yes"
+    state: started
+
+- name: "Reboot srv1cv83"
+  systemd:
+    name: srv1cv83.service
+    state: restarted
+
+- name: "Update the font cache"
+  action: command fc-cache -f -v
+
