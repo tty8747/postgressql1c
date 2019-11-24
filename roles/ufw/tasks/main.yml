@@ -14,6 +14,7 @@
   ufw:
     rule: allow
     port: '5432'
+    proto: 'tcp'
     src: "{{ item }}"
   loop:
     - 127.0.0.1/32
@@ -22,6 +23,7 @@
   ufw:
     rule: allow
     port: '1540:1541'
+    proto: 'tcp'
     src: "{{ item }}"
   loop:
     - 192.168.100.0/24
@@ -30,6 +32,7 @@
   ufw:
     rule: allow
     port: '1560:1591'
+    proto: 'tcp'
     src: "{{ item }}"
   loop:
     - 192.168.100.0/24
