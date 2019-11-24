@@ -1,1 +1,21 @@
 ---
+
+databases:
+  db_name1:
+    set:
+      - db_name: db_name1
+        users:
+          name: name111
+          password: pass111
+  db_name2:
+    set:
+      - db_name: db_name2
+        users:
+          name: name222
+          password: pass222
+  db_name3:
+    set:
+      - db_name: db_name3
+        users:
+          name: name333
+          password: pass333

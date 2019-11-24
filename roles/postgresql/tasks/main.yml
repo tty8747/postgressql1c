@@ -62,4 +62,36 @@
     owner: postgres
     group: postgres
     mode: u=rw,g=r,o=r
-  notify: "Reboot Postgresql that smb.conf changes to apply"
+  notify: "Reboot Postgresql that postgresql.conf changes to apply"
+
+- name: "Ensure database is created"
+  become_user: postgres
+  become: "yes"
+  postgresql_db:
+    name: "{{ item.1.db_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'ru_RU.UTF-8'
+    lc_ctype: 'ru_RU.UTF-8'
+    template: 'template0'
+    state: present
+  loop: "{{ databases | dict2items | subelements('value.set') }}"
+
+- name: "Ensure user has access to the database"
+  become_user: postgres
+  become: "yes"
+  postgresql_user:
+    db: "{{ item.1.db_name }}"
+    name: "{{ item.1.users.name }}"
+    password: "{{ item.1.users.password }}"
+    priv: ALL
+    state: present
+  loop: "{{ databases | dict2items | subelements('value.set') }}"
+
+- name: "Ensure user does not have unnecessary privileges"
+  become_user: postgres
+  become: "yes"
+  postgresql_user:
+    name: "{{ item.1.users.name }}"
+    role_attr_flags: NOSUPERUSER,NOCREATEDB
+    state: present
+  loop: "{{ databases | dict2items | subelements('value.set') }}"
