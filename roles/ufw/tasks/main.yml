@@ -17,3 +17,19 @@
     src: "{{ item }}"
   loop:
     - 127.0.0.1/32
+
+- name: "Opening ports for 1c: 1540-1541"
+  ufw:
+    rule: allow
+    port: '1540:1541'
+    src: "{{ item }}"
+  loop:
+    - 192.168.100.0/24
+
+- name: "Opening ports for 1c: 1560-1591"
+  ufw:
+    rule: allow
+    port: '1560:1591'
+    src: "{{ item }}"
+  loop:
+    - 192.168.100.0/24
