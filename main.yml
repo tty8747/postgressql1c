@@ -19,6 +19,6 @@
     - { role: common, tags: ['common'] }
     - { role: docker, tags: ['docker'] }
     - { role: docker-compose, tags: ['docker-compose'] }
-    - { role: ufw, tags: ['ufw'] }
     - { role: postgresql, tags: ['postgresql'] }
     - { role: srv1cv83, tags: ['srv1cv83'] }
+    - { role: ufw, tags: ['ufw'] }
