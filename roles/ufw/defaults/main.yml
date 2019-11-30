@@ -2,3 +2,4 @@
 ufw_state: enabled
 ufw_profiles:
   - OpenSSH
+  - Samba
