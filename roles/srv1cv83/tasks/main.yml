@@ -1,10 +1,22 @@
 ---
 
-- name: "Install windows fonts"
+- name: "Recommended packages for 1c on the Ubuntnu 16.04"
   apt:
-    name: ttf-mscorefonts-installer
+    name: "{{ item }}"
   notify: "Update the font cache"
-
+  loop:
+    - ttf-mscorefonts-installer
+    - fontconfig
+    - libfreetype6
+    - libgsf-1-114
+    - glib-networking
+    - glib-networking-common
+    - glib-networking-services
+    - unixodbc
+    - libkrb5-26-heimdal
+    - libkrb5-3
+    - libkrb5support0
+    - libgssapi-krb5-2
 
 - name: "Install a .deb packages from S3"
   apt:
