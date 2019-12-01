@@ -21,4 +21,5 @@
     - { role: docker-compose, tags: ['docker-compose'] }
     - { role: postgresql, tags: ['postgresql'] }
     - { role: srv1cv83, tags: ['srv1cv83'] }
+    - { role: auto1c, tags: ['auto1c'] }
     - { role: ufw, tags: ['ufw'] }

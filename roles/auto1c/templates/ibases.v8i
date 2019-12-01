@@ -1,0 +1,10 @@
+﻿[db_name_test1]
+Connect=Srvr="balmora";Ref="test1";
+ID=090111d8-88d3-4002-9ca6-5778fc1fb22c
+OrderInList=16384
+Folder=/
+OrderInTree=256
+External=0
+App=Auto
+WA=1
+Version=8.3

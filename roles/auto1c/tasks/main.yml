@@ -1,0 +1,116 @@
+---
+- name: "Install samba package"
+  apt:
+    name: samba
+
+- name: "Push samba config"
+  template:
+    src: "roles/auto1c/templates/smb.conf.j2"
+    dest: "/etc/samba/smb.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: "Reboot samba that smb.conf changes to apply"
+
+- name: "Ensure Windows limit (16384)"
+  lineinfile:
+    path: "/etc/security/limits.conf"
+    regexp: "-       nofile          16384$"
+    insertbefore: "^# End of file"
+    line: "*                -       nofile          16384"
+  notify: "Reboot a machine that file changes to apply (/etc/security/limits.conf)"
+
+- name: "Create groups"
+  group:
+    name: "{{ item.1.name }}"
+    state: "{{ item.1.params.grp_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+
+- name: "Ensure the presence of the root folder with the necessary rights"
+  file:
+    path: "{{ path_to_mount_raid }}"
+    owner: nobody
+    group: nogroup
+    mode: a=rwx
+    state: directory
+
+- name: "Create folders"
+  file:
+    path: "{{ path_to_mount_raid }}/{{ item.1.name }}"
+    owner: "{{ item.1.params.owner }}"
+    group: "{{ item.1.name }}"
+    mode: "{{ item.1.params.mode }}"
+    state: "{{ item.1.params.folder_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+
+- name: "Create users"
+  user:
+    name: "{{ item.key }}"
+    comment: "{{ item.value.description }}"
+    shell: /usr/sbin/nologin
+    groups: "{{ item.value.grps | list }}"
+    state: "{{ item.value.state }}"
+    expires: 1422403387
+  loop: "{{ lookup('dict', users) }}"
+
+- name: "Sets default ACL"
+  acl:
+    path: "{{ path_to_mount_raid }}/{{ item.1.name }}"
+    entity: "{{ item.1.name }}"
+    etype: group
+    permissions: rw
+    default: yes
+    state: "{{ item.1.params.acl_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+  when:  item.1.params.acl_state == "present"
+
+- name: "Samba: set a password and enable users"
+  shell: "(echo {{ item.value.smbpassword }}; echo {{ item.value.smbpassword }}) | smbpasswd -s -a {{ item.key }}"
+  loop: "{{ lookup('dict', users) }}"
+
+- name: "Enable samba user"
+  command: "smbpasswd -e {{ item.key }}"
+  loop: "{{ users | dict2items }}"
+  when: item.value.enabled == "yes"
+
+- name: "Disable samba user"
+  command: "smbpasswd -d {{ item.key }}"
+  loop: "{{ users | dict2items }}"
+  when: item.value.enabled == "no"
+
+- name: "Added the task in crontab for delete old files"
+  cron:
+    name: "Delete files older than 30 days in {{ item.1.name }}"
+    special_time: daily
+    job: "/usr/bin/find {{ path_to_mount_raid }}/{{ item.1.name }}/.recycle -type f -mtime +30 -exec rm -rf {} \\;"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+
+- name: "Download file from s3 bucket with check (md5)"
+  get_url:
+    url: "https://filesvy38.s3.eu-central-1.amazonaws.com/win/auto1c.tgz"
+    dest: /tmp
+    checksum: md5:98771d253859ca309c353c4919ec6c4c
+
+- name: "1c from S3 bucket"
+  unarchive:
+    src: "/tmp/auto1c.tgz"
+    dest: "{{ path_to_mount_raid }}/auto1c"
+    remote_src: yes
+    group: auto1c
+    mode: u=rw,g=rwx,o=rx
+
+- name: "Push 1cescmn.cfg"
+  template:
+    src: "roles/auto1c/templates/1cescmn.cfg"
+    dest: "{{ path_to_mount_raid }}/auto1c/1cescmn.cfg"
+    owner: root
+    group: auto1c
+    mode: u=rw,g=rwx,o=rx
+
+- name: "Push ibases.v8i"
+  template:
+    src: "roles/auto1c/templates/ibases.v8i"
+    dest: "{{ path_to_mount_raid }}/auto1c/ibases.v8i"
+    owner: root
+    group: auto1c
+    mode: u=rw,g=rwx,o=rx
