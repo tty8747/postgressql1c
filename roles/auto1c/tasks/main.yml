@@ -78,10 +78,27 @@
   loop: "{{ users | dict2items }}"
   when: item.value.enabled == "no"
 
+- name: "Push backup1c.sh"
+  template:
+    src: "roles/auto1c/templates/backup1c.sh.j2"
+    dest: "/root/backup1c.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Added the task in crontab for to backup"
+  cron:
+    name: "Backup bases"
+    minute: "0"
+    hour: "7,21"
+    user: root
+    job: /root/backup1c.sh
+
 - name: "Added the task in crontab for delete old files (last 30 files)"
   cron:
-    name: "Delete files older than 30 days in {{ item.1.name }}"
+    name: "Delete files older than 30 days in {{ path_to_mount_raid }}/{{ item.1.name }}"
     special_time: daily
+    user: root
     job: "if [ $(ls {{ path_to_mount_raid }}/{{ item.1.name }}/backup--*.sql.gz | wc -l) -gt 30 ]; then /usr/bin/find {{ path_to_mount_raid }}/{{ item.1.name }} -type f -mtime +30 -exec rm -rf {} \\;; fi"
   loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
   when: item.1.name == "{{ folder_name_for_backup1c }}"

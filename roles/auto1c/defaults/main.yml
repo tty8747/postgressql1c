@@ -2,6 +2,10 @@
 path_to_mount_raid: /samba
 folder_name_for_auto1c: auto1c
 folder_name_for_backup1c: backups
+pghost: localhost
+pgport: 5432
+pguser: postgres
+pgpassword: tmux
 
 group_dict:
   special_user_folders:
