@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+BACKUP_ROOT="{{ path_to_mount_raid }}/{{ folder_name_for_backup1c }}"
+
+# export PGBIN=
+# export PGDATABASE=
+export PGHOST={{ pghost }}
+export PGPORT={{ pgport }}
+export PGUSER={{ pguser }}
+export PGPASSWORD={{ pgpassword }}
+
+# mkdir -pv $BACKUP_ROOT/`date +%F`
+# BACKUP_DIR="$BACKUP_ROOT/`date +%F`"
+
+# Making list of databases
+DB_LIST=`/usr/bin/psql -l -t -U postgres |  /usr/bin/cut -d'|' -f1 | sed '/^ *$/d' | grep -v template* | grep -v postgres`
+for DB in $DB_LIST
+do
+
+/usr/bin/psql -l -t -U postgres --dbname $DB --command "REINDEX DATABASE \"\$DB\";" >> /var/log/reindex.log
+
+done
+
+unset PGHOST
+unset PGPORT
+unset PGUSER
+unset PGPASSWORD
+
+exit 0
