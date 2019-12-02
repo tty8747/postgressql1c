@@ -86,6 +86,31 @@
     group: root
     mode: u=rwx,g-rwx,o-rwx
 
+- name: "Push vacuum_full.sh"
+  template:
+    src: "roles/auto1c/templates/vacuum_full.sh.j2"
+    dest: "/root/vacuum_full.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push reindex.sh"
+  template:
+    src: "roles/auto1c/templates/reindex.sh.j2"
+    dest: "/root/reindex.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push del_old_files.sh"
+  template:
+    src: "roles/auto1c/templates/del_old_files.sh.j2"
+    dest: "/root/del_old_files.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+  tags: go
+
 - name: "Added the task in crontab for to backup"
   cron:
     name: "Backup bases"
@@ -99,7 +124,7 @@
     name: "Delete files older than 30 days in {{ path_to_mount_raid }}/{{ item.1.name }}"
     special_time: daily
     user: root
-    job: "if [ $(ls {{ path_to_mount_raid }}/{{ item.1.name }}/backup--*.sql.gz | wc -l) -gt 30 ]; then /usr/bin/find {{ path_to_mount_raid }}/{{ item.1.name }} -type f -mtime +30 -exec rm -rf {} \\;; fi"
+    job: /root/del_old_files.sh
   loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
   when: item.1.name == "{{ folder_name_for_backup1c }}"
 
@@ -132,3 +157,20 @@
     owner: root
     group: auto1c
     mode: u=rw,g=rwx,o=rx
+
+- name: "Added the task in crontab for VACUUM FULL"
+  cron:
+    name: "Vacuum full"
+    weekday: "1"
+    minute: "0"
+    hour: "3"
+    user: root
+    job: /root/vacuum_full.sh
+
+- name: "Added the task in crontab for to REINDEX"
+  cron:
+    name: "Reindex"
+    minute: "30"
+    hour: "1"
+    user: root
+    job: /root/reindex.sh
