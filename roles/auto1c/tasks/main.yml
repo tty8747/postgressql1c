@@ -78,6 +78,14 @@
   loop: "{{ users | dict2items }}"
   when: item.value.enabled == "no"
 
+- name: "Create folder for guests"
+  file:
+    path: "{{ path_to_mount_raid }}/share"
+    owner: nobody
+    group: nogroup
+    mode: u=rwx,g=rwx,o=rwx
+    state: directory
+
 - name: "Push backup1c.sh"
   template:
     src: "roles/auto1c/templates/backup1c.sh.j2"

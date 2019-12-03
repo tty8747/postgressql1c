@@ -259,6 +259,13 @@ log level = 1 auth:5 winbind:5
 # to the drivers directory for these users to have write rights in it
 ;   write list = root, @lpadmin
 
+[guest]
+   path = /samba/guest
+   guest ok = Yes
+   writable = Yes
+   create mask = 0664
+   directory mask = 0775
+
 [{{ folder_name_for_auto1c }}]
    path = {{ path_to_mount_raid }}/{{ folder_name_for_auto1c }}
    browseable = yes
