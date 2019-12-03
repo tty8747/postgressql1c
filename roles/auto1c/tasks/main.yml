@@ -165,6 +165,17 @@
     group: "{{ folder_name_for_auto1c }}"
     mode: u=rw,g=rwx,o=rx
 
+- name: "Push clean_password_cache.cmd.j2"
+  template:
+    src: "roles/auto1c/templates/clean_password_cache.cmd.j2"
+    dest: "{{ path_to_mount_raid }}/{{ item }}/clean_password_cache.cmd"
+    owner: root
+    group: "{{ item }}"
+    mode: u=rw,g=rwx,o=rx
+  loop:
+    - "{{ folder_name_for_auto1c }}"
+    - "{{ folder_name_for_backup1c }}"
+
 - name: "Added the task in crontab for VACUUM FULL"
   cron:
     name: "Vacuum full"
