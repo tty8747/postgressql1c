@@ -40,3 +40,4 @@ users:
     enabled: "yes"
     grps:
       - "{{ folder_name_for_backup1c }}"
+      - "{{ folder_name_for_auto1c }}"
