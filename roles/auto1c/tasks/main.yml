@@ -110,6 +110,14 @@
     group: root
     mode: u=rwx,g-rwx,o-rwx
 
+- name: "Push restore1c.sh"
+  template:
+    src: "roles/auto1c/templates/restore1c.sh.j2"
+    dest: "/root/restore1c.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
 - name: "Added the task in crontab for to backup"
   cron:
     name: "Backup bases"
