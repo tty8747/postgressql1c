@@ -26,7 +26,7 @@
     proto: 'tcp'
     src: "{{ item }}"
   loop:
-    - 192.168.100.0/24
+    - "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
 
 - name: "Opening ports for 1c: 1560-1591"
   ufw:
@@ -35,4 +35,4 @@
     proto: 'tcp'
     src: "{{ item }}"
   loop:
-    - 192.168.100.0/24
+    - "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
