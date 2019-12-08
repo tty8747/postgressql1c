@@ -1,6 +1,6 @@
 ---
 
-- hosts: balmora
+- hosts: ubu16
   remote_user: deploy
   become: "yes"
   become_user: "root"
