@@ -3,7 +3,7 @@
 - hosts: all
   gather_facts: "no"
   become: "yes"
-  remote_user: goto
+  remote_user: root
 
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
@@ -21,6 +21,11 @@
 
   - name: "Set default python3.6"
     raw: test -x /usr/bin/python3 || update-alternatives --install /usr/bin/python3 python /usr/bin/python3.6 1
+
+  - name: "Update cache"
+    apt:
+      update_cache: "yes"
+      cache_valid_time: 3600
 
   - name: "Install packages"
     apt:
