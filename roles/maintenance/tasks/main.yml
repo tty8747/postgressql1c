@@ -1,0 +1,163 @@
+---
+- name: "Install samba package"
+  apt:
+    name: samba
+
+- name: "Push samba config"
+  template:
+    src: "roles/maintenance/templates/smb.conf.j2"
+    dest: "/etc/samba/smb.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: "Reboot samba that smb.conf changes to apply"
+
+- name: "Ensure Windows limit (16384)"
+  lineinfile:
+    path: "/etc/security/limits.conf"
+    regexp: "-       nofile          16384$"
+    insertbefore: "^# End of file"
+    line: "*                -       nofile          16384"
+  notify: "Reboot a machine that file changes to apply (/etc/security/limits.conf)"
+
+- name: "Create groups"
+  group:
+    name: "{{ item.1.name }}"
+    state: "{{ item.1.params.grp_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+
+- name: "Ensure the presence of the root folder with the necessary rights"
+  file:
+    path: "{{ path_to_mount_raid }}"
+    owner: nobody
+    group: nogroup
+    mode: a=rwx
+    state: directory
+
+- name: "Create folders"
+  file:
+    path: "{{ path_to_mount_raid }}/{{ item.1.name }}"
+    owner: "{{ item.1.params.owner }}"
+    group: "{{ item.1.name }}"
+    mode: "{{ item.1.params.mode }}"
+    state: "{{ item.1.params.folder_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+
+- name: "Create users"
+  user:
+    name: "{{ item.key }}"
+    comment: "{{ item.value.description }}"
+    shell: /usr/sbin/nologin
+    groups: "{{ item.value.grps | list }}"
+    state: "{{ item.value.state }}"
+  loop: "{{ lookup('dict', users) }}"
+
+- name: "Sets default ACL"
+  acl:
+    path: "{{ path_to_mount_raid }}/{{ item.1.name }}"
+    entity: "{{ item.1.name }}"
+    etype: group
+    permissions: rw
+    default: yes
+    state: "{{ item.1.params.acl_state }}"
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+  when:  item.1.params.acl_state == "present"
+
+- name: "Samba: set a password and enable users"
+  shell: "(echo {{ item.value.smbpassword }}; echo {{ item.value.smbpassword }}) | smbpasswd -s -a {{ item.key }}"
+  loop: "{{ lookup('dict', users) }}"
+
+- name: "Enable samba user"
+  command: "smbpasswd -e {{ item.key }}"
+  loop: "{{ users | dict2items }}"
+  when: item.value.enabled == "yes"
+
+- name: "Disable samba user"
+  command: "smbpasswd -d {{ item.key }}"
+  loop: "{{ users | dict2items }}"
+  when: item.value.enabled == "no"
+
+- name: "Push backup1c.sh"
+  template:
+    src: "roles/maintenance/templates/backup1c.sh.j2"
+    dest: "/root/backup1c.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push vacuum_full.sh"
+  template:
+    src: "roles/maintenance/templates/vacuum_full.sh.j2"
+    dest: "/root/vacuum_full.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push reindex.sh"
+  template:
+    src: "roles/maintenance/templates/reindex.sh.j2"
+    dest: "/root/reindex.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push del_old_files.sh"
+  template:
+    src: "roles/maintenance/templates/del_old_files.sh.j2"
+    dest: "/root/del_old_files.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Push restore1c.sh"
+  template:
+    src: "roles/maintenance/templates/restore1c.sh.j2"
+    dest: "/root/restore1c.sh"
+    owner: root
+    group: root
+    mode: u=rwx,g-rwx,o-rwx
+
+- name: "Added the task in crontab for to backup"
+  cron:
+    name: "Backup bases"
+    minute: "0"
+    hour: "7,21"
+    user: root
+    job: /root/backup1c.sh
+
+- name: "Added the task in crontab for delete old files (last 30 files)"
+  cron:
+    name: "Delete files older than 30 days in {{ path_to_mount_raid }}/{{ item.1.name }}"
+    special_time: daily
+    user: root
+    job: /root/del_old_files.sh
+  loop: "{{ group_dict | dict2items | subelements('value.settings') }}"
+  when: item.1.name == "{{ folder_name_for_backup1c }}"
+
+- name: "Push clean_password_cache.cmd.j2"
+  template:
+    src: "roles/maintenance/templates/clean_password_cache.cmd.j2"
+    dest: "{{ path_to_mount_raid }}/{{ item }}/clean_password_cache.cmd"
+    owner: root
+    group: "{{ item }}"
+    mode: u=rw,g=rwx,o=rx
+  loop:
+    - "{{ folder_name_for_auto1c }}"
+    - "{{ folder_name_for_backup1c }}"
+
+- name: "Added the task in crontab for VACUUM FULL"
+  cron:
+    name: "Vacuum full"
+    weekday: "1"
+    minute: "0"
+    hour: "3"
+    user: root
+    job: /root/vacuum_full.sh
+
+- name: "Added the task in crontab for to REINDEX"
+  cron:
+    name: "Reindex"
+    minute: "30"
+    hour: "1"
+    user: root
+    job: /root/reindex.sh

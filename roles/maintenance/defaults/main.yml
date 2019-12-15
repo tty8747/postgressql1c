@@ -1,0 +1,43 @@
+---
+path_to_mount_raid: /samba
+folder_name_for_auto1c: auto1c
+folder_name_for_backup1c: backups
+pghost: localhost
+pgport: 5432
+pguser: postgres
+pgpassword: tmux
+
+group_dict:
+  special_user_folders:
+    settings:
+      - name: "{{ folder_name_for_auto1c }}"
+        params:
+          mode: "u=rwxs,g=rwxs,o-rwx"
+          owner: nobody
+          folder_state: directory
+          grp_state: present
+          acl_state: present
+      - name: "{{ folder_name_for_backup1c }}"
+        params:
+          mode: "u=rwxs,g=rwxs,o-rwx"
+          owner: nobody
+          folder_state: directory
+          grp_state: present
+          acl_state: present
+
+users:
+  deploy1c:
+    description: "User for deploy 1c to windows"
+    smbpassword: "ui6iex1T"
+    state: present
+    enabled: "yes"
+    grps:
+      - "{{ folder_name_for_auto1c }}"
+  backup1c:
+    description: "User for access to backup folder"
+    smbpassword: "Fu1xa8Ch"
+    state: present
+    enabled: "yes"
+    grps:
+      - "{{ folder_name_for_backup1c }}"
+      - "{{ folder_name_for_auto1c }}"

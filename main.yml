@@ -1,6 +1,6 @@
 ---
 
-- hosts: ubu16
+- hosts: serv1c8
   remote_user: deploy
   become: "yes"
   become_user: "root"
@@ -21,5 +21,6 @@
     - { role: docker-compose, tags: ['docker-compose'] }
     - { role: postgresql, tags: ['postgresql'] }
     - { role: srv1cv83, tags: ['srv1cv83'] }
+    - { role: maintenance, tags: ['maintenance'] }
     - { role: auto1c, tags: ['auto1c'] }
     - { role: ufw, tags: ['ufw'] }
