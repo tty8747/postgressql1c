@@ -28,3 +28,7 @@
     name: "{{ my_locale }}"
     state: present
   notify: "Set as default locale"
+
+- name: "Set as default locale"
+  command: "update-locale LANG={{ my_locale }} LC_ALL={{ my_locale }} && dpkg-reconfigure console-setup"
+
