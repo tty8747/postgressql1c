@@ -19,6 +19,7 @@
     - iotop
     - net-tools
     - git
+    - xz-utils
 - name: "Set timezone to your timezone"
   timezone:
     name: "{{ timezone }}"
