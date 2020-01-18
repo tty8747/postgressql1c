@@ -13,7 +13,6 @@
     - curl
     - wget
     - tmux
-    - glances
     - atop
     - ncdu
     - iotop
