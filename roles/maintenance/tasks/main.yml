@@ -1,7 +1,10 @@
 ---
-- name: "Install samba package"
+- name: "Install samba package and dependiens"
   apt:
-    name: samba
+    name: "{{ item }}"
+  loop:
+    - samba
+    - acl
 
 - name: "Push samba config"
   template:
