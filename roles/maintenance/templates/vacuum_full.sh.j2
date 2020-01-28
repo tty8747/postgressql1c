@@ -19,7 +19,7 @@ DB_LIST=`/usr/bin/psql -l -t -U postgres |  /usr/bin/cut -d'|' -f1 | sed '/^ *$/
 for DB in $DB_LIST
 do
 
-/usr/bin/psql -l -t -U postgres --dbname $DB --command "VACUUM(FULL, ANALYZE);" >> /var/log/vacuum.log
+/usr/bin/psql -t -U postgres --dbname $DB --command "VACUUM(FULL, ANALYZE);" >> /var/log/vacuum.log
 
 done
 
