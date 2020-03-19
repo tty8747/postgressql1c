@@ -2,8 +2,24 @@
 
 set -e
 
-if [ $(ls {{ path_to_mount_raid }}/{{ folder_name_for_backup1c }}/backup--*.sql.gz | wc -l) -gt 30 ]; then 
-  /usr/bin/find {{ path_to_mount_raid }}/{{ folder_name_for_backup1c }} -type f -mtime +30   -exec rm -rf {} \\;
-fi
+# export PGBIN=
+# export PGDATABASE=
+export PGHOST=localhost
+export PGPORT=5432
+export PGUSER=postgres
+export PGPASSWORD=yourpassword
+
+DB_LIST=$(/usr/bin/psql -l -t -U postgres |  /usr/bin/cut -d'|' -f1 | sed '/^ *$/d' | grep -Ev "template*|postgres")
+for DB in $DB_LIST
+  do
+    if [ $(ls /samba/backups/$DB*.sql.gz | wc -l) -gt 30 ]; then
+      /usr/bin/find /samba/backups/$DB* -type f -mtime +30 -exec rm -rf {} \;
+    fi
+  done
+
+unset PGHOST
+unset PGPORT
+unset PGUSER
+unset PGPASSWORD
 
 exit 0
