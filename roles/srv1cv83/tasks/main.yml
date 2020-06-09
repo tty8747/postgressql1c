@@ -18,13 +18,25 @@
     - libkrb5support0
     - libgssapi-krb5-2
 
+- name: "Extract /root/deb64_8_3_16_1148.tar.gz /tmp"
+  unarchive:
+    src: /root/deb64_8_3_16_1148.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "Extract /root/client_8_3_16_1148.deb64.tar.gz /tmp"
+  unarchive:
+    src: /root/client_8_3_16_1148.deb64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
 - name: "Install a .deb packages from S3"
   apt:
     deb: "{{ item }}"
   loop:
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/8.3.15.1747/1c-enterprise83-common_8.3.15-1747_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/8.3.15.1747/1c-enterprise83-server_8.3.15-1747_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/8.3.15.1747/1c-enterprise83-ws_8.3.15-1747_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/8.3.15.1747/1c-enterprise83-client_8.3.15-1747_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/8.3.15.1747/1c-enterprise83-crs_8.3.15-1747_amd64.deb"
+    - "/tmp/1c-enterprise83-common_8.3.16-1148_amd64.deb"
+    - "/tmp/1c-enterprise83-server_8.3.16-1148_amd64.deb"
+    - "/tmp/1c-enterprise83-ws_8.3.16-1148_amd64.deb"
+    - "/tmp/1c-enterprise83-client_8.3.16-1148_amd64.deb"
+    - "/tmp/1c-enterprise83-crs_8.3.16-1148_amd64.deb"
   notify: "Enable service srv1cv83 and set state started"
