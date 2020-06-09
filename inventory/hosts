@@ -1,5 +1,5 @@
-[serv1c]
-ubu16 ansible_host=c.mz0.ru ansible_ssh_port=9822
+[lxc]
+serv1c8 ansible_host=192.168.3.58
 
-[serv1c:vars]
+[lxc:vars]
 ansible_python_interpreter=/usr/bin/python3
