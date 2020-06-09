@@ -18,29 +18,44 @@
     deb: "{{ item }}"
   loop:
     - "http://security.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.3_amd64.deb"
-    - "http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7ubuntu0.4_amd64.deb"
-    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-client-common_199ubuntu0.1_all.deb"
-    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-common_199ubuntu0.1_all.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7ubuntu0.5_amd64.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-client-common_190ubuntu0.1_all.deb"
+    - "http://security.ubuntu.com/ubuntu/pool/main/p/postgresql-common/postgresql-common_190ubuntu0.1_all.deb"
+
+- name: "Extract /root/postgresql_9.6.7_1.1C_amd64_addon_deb.tar.bz2 /tmp"
+  unarchive:
+    src: /root/postgresql_9.6.7_1.1C_amd64_addon_deb.tar.bz2
+    dest: /tmp
+    remote_src: yes
+
+- name: "Extract /root/postgresql_9.6.7_1.1C_amd64_deb.tar.bz2 /tmp"
+  unarchive:
+    src: /root/postgresql_9.6.7_1.1C_amd64_deb.tar.bz2
+    dest: /tmp
+    remote_src: yes
 
 - name: "Install PostgreSQL for 1c from S3"
   apt:
     deb: "{{ item }}"
   loop:
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libpq5_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-client-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-plperl-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-plpython3-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-pltcl-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-doc-11_11.5-1.1C_all.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libecpg6_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libecpg-compat3_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libpgtypes3_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libpq-dev_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-11-dbg_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-pltcl-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/postgresql-server-dev-11_11.5-1.1C_amd64.deb"
-    - "https://filesvy38.s3.eu-central-1.amazonaws.com/deb/postgresql11.5/libecpg-dev_11.5-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_deb/libpq5_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libpq-dev_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libecpg6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libecpg-compat3_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libpgtypes3_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libpq-dev_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-doc-9.6_9.6.7-1.1C_all.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-server-dev-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_deb/postgresql-client-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_deb/postgresql-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_deb/postgresql-contrib-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/libecpg-dev_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-9.6-dbg_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-plperl-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-plpython3-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-plpython-9.6_9.6.7-1.1C_amd64.deb"
+    - "/tmp/postgresql-9.6.7-1.1C_amd64_addon_deb/postgresql-pltcl-9.6_9.6.7-1.1C_amd64.deb"
+
   notify: "Enable service postgresql and set state started"
 
 - name: "Set hold postgresql"
@@ -51,40 +66,8 @@
 - name: "Push Postgresql config"
   template:
     src: "roles/postgresql/templates/postgresql.conf.j2"
-    dest: "/etc/postgresql/11/main/postgresql.conf"
+    dest: "/etc/postgresql/9.6/main/postgresql.conf"
     owner: postgres
     group: postgres
     mode: u=rw,g=r,o=r
   notify: "Reboot Postgresql that postgresql.conf changes to apply"
-
-- name: "Ensure database is created"
-  become_user: postgres
-  become: "yes"
-  postgresql_db:
-    name: "{{ item.1.db_name }}"
-    encoding: 'UTF-8'
-    lc_collate: 'ru_RU.UTF-8'
-    lc_ctype: 'ru_RU.UTF-8'
-    template: 'template0'
-    state: present
-  loop: "{{ databases | dict2items | subelements('value.set') }}"
-
-- name: "Ensure user has access to the database"
-  become_user: postgres
-  become: "yes"
-  postgresql_user:
-    db: "{{ item.1.db_name }}"
-    name: "{{ item.1.user.name }}"
-    password: "{{ item.1.user.password }}"
-    priv: ALL
-    state: present
-  loop: "{{ databases | dict2items | subelements('value.set') }}"
-
-- name: "Ensure user does not have unnecessary privileges"
-  become_user: postgres
-  become: "yes"
-  postgresql_user:
-    name: "{{ item.1.user.name }}"
-    role_attr_flags: NOSUPERUSER,NOCREATEDB
-    state: present
-  loop: "{{ databases | dict2items | subelements('value.set') }}"
