@@ -27,12 +27,16 @@
     src: /root/postgresql_9.6.7_1.1C_amd64_addon_deb.tar.bz2
     dest: /tmp
     remote_src: yes
+    extra_opts:
+    - --no-same-owner
 
 - name: "Extract /root/postgresql_9.6.7_1.1C_amd64_deb.tar.bz2 /tmp"
   unarchive:
     src: /root/postgresql_9.6.7_1.1C_amd64_deb.tar.bz2
     dest: /tmp
     remote_src: yes
+    extra_opts:
+    - --no-same-owner
 
 - name: "Install PostgreSQL for 1c from S3"
   apt:
