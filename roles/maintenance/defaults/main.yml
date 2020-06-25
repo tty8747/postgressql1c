@@ -28,14 +28,14 @@ group_dict:
 users:
   deploy1c:
     description: "User for deploy 1c to windows"
-    smbpassword: "ui6iex1T"
+    smbpassword: "somepassword"
     state: present
     enabled: "yes"
     grps:
       - "{{ folder_name_for_auto1c }}"
   backup1c:
     description: "User for access to backup folder"
-    smbpassword: "Fu1xa8Ch"
+    smbpassword: "somepassword"
     state: present
     enabled: "yes"
     grps:
